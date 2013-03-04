@@ -1,8 +1,11 @@
 package jp.ergo.android.imhere;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -19,6 +22,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class ImhereService extends Service implements LocationListener {
 
@@ -48,7 +54,7 @@ public class ImhereService extends Service implements LocationListener {
 		mUser = intent.getStringExtra("user");	// コールバック関数内で使いたいので変数に入れとく。
 		mPassword = intent.getStringExtra("password"); // コールバック関数内で使いたいので変数に入れとく。
 		mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);	// onDestroy()で後始末をしたいので変数に入れる。
-		
+
 		// タスクを実行。
 		final TimerTask task = new TimerTask() {
 			@Override
@@ -72,7 +78,7 @@ public class ImhereService extends Service implements LocationListener {
 		mTimer.cancel();
 		mLocationManager.removeUpdates(this);
 		super.onDestroy();
-		
+
 		Log.d(TAG, "onDestroy");
 	}
 
@@ -82,9 +88,14 @@ public class ImhereService extends Service implements LocationListener {
 			@Override
 			public void run() {
 				final String title = "テスト送信";
-				final String address = getAddress(location.getLatitude(), location.getLongitude());
+				final String address = String.format("%s%s(%f, %f)",
+						getAddress(location.getLatitude(), location.getLongitude())
+						,System.getProperty("line.separator")
+						,location.getLatitude()
+						,location.getLongitude()
+						);
 				final String message =  new MessageBuilder(address).toString();
-				
+
 				new GmailSender(mUser, mPassword).sendEmail(title, message, mUser);
 				mLocationManager.removeUpdates(ImhereService.this);
 			}
@@ -93,12 +104,16 @@ public class ImhereService extends Service implements LocationListener {
 
 	@Override
 	public void onProviderDisabled(String provider) {
+		System.out.println("onProviderDisabled() " + provider);
 	}
 	@Override
 	public void onProviderEnabled(String provider) {
+		System.out.println("onProviderEnabled() " + provider);
 	}
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
+		System.out.println("onStatusChanged() " + provider);
+
 	}
 
 	private String getAddress(final double latitude, final double longitude){
@@ -107,20 +122,21 @@ public class ImhereService extends Service implements LocationListener {
 			// Call the synchronous getFromLocation() method by passing in the lat/long values.
 			final List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
 			if (addresses != null && addresses.size() > 0) {
-				final Address address = addresses.get(0);
-				final StringBuilder builder = new StringBuilder();
-				builder.append(address.getAdminArea());
-				builder.append(address.getLocality());
-				builder.append(System.getProperty("line.separator"));
-				builder.append(address.getSubAdminArea() != null ? address.getSubAdminArea(): "");
-				builder.append(address.getFeatureName());
-				builder.append(address.getThoroughfare());
-				return builder.toString();
+
+				// 一番長いのを使いたい
+				final Map<Integer, String> sortedByLength = Maps.newTreeMap(Collections.reverseOrder());
+				for(Address address: addresses){
+					final String addressString = address.getAddressLine(1);
+					if(addressString == null || addressString == null) continue;
+					sortedByLength.put(addressString.length(), addressString);
+				}
+
+				return Lists.newArrayList(sortedByLength.values()).get(0);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return "" + latitude + ", " + longitude;
 	}
-	
+
 }
