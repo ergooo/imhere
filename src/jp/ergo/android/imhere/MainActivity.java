@@ -1,16 +1,13 @@
 package jp.ergo.android.imhere;
 
+import java.util.Map.Entry;
 import java.util.Properties;
 
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,7 +20,6 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		// FIXME
 		StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
 
@@ -44,42 +40,26 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				final String user = userEditText.getText().toString();
 				final String password = passwordEditText.getText().toString();
-
-				sendEmail(user, password);
+				
+				final Intent intent = new Intent(getBaseContext(), ImhereService.class);
+				intent.putExtra("user", user);
+				intent.putExtra("password", password);
+				startService(intent);
 			}
 		});
 		layout.addView(submit);
-	}
-
-
-	private void sendEmail(final String user, final String password){
-		final Properties props = new Properties();
-		props.put("mail.smtp.host", "smtp.gmail.com");// SMTPサーバ名
-		props.put("mail.smtp.port", "587"); // SMTPサーバポート
-		props.put("mail.smtp.auth", "true");// smtp auth
-		props.put("mail.smtp.starttls.enable", "true");// STTLS
-
-		final Session sess = Session.getInstance(props);
-		final MimeMessage mimeMsg = new MimeMessage(sess);
-
-		try {
-
-			mimeMsg.setFrom(new InternetAddress(user));//Fromアドレス
-			mimeMsg.setRecipient(Message.RecipientType.TO, new InternetAddress(user));//送信先アドレス
-			mimeMsg.setContent("body", "text/plain; utf-8");
-			mimeMsg.setHeader("Content-Transfer-Encoding", "7bit");
-			mimeMsg.setSubject("テスト送信");//件名
-			mimeMsg.setText("アンドロイドからの送信", "utf-8");//本文
-
-			final Transport transport = sess.getTransport("smtp");
-			transport.connect(user, password);
-			transport.sendMessage(mimeMsg, mimeMsg.getAllRecipients());// メール送信
-			transport.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+		
+		final Button stopButton = new Button(this);
+		stopButton.setText("停止");
+		stopButton.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				stopService(new Intent(getBaseContext(),ImhereService.class));
+			}
+		});
+		
+		layout.addView(stopButton);
+		
 	}
 
 	@Override
@@ -89,4 +69,9 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
+	@Override
+	public void onDestroy(){
+		stopService(new Intent(getBaseContext(),ImhereService.class));
+		super.onDestroy();
+	}
 }
