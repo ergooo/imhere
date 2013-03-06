@@ -30,6 +30,11 @@ public class ImhereService extends Service implements LocationListener {
 	private String mPassword = "";
 	private LocationManager mLocationManager;
 
+	private native String stringA();
+
+    static {
+        System.loadLibrary("imherejni");
+    }
 	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
@@ -63,7 +68,9 @@ public class ImhereService extends Service implements LocationListener {
 				});
 			}
 		};
-		mTimer.schedule(task, DELAY, PERIOD);
+//		mTimer.schedule(task, DELAY, PERIOD);
+		
+		System.out.println(stringA());
 
 		return START_STICKY;
 	}
