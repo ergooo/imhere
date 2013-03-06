@@ -1,13 +1,12 @@
 package jp.ergo.android.imhere;
 
-import java.util.Map.Entry;
-import java.util.Properties;
-
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.util.Log;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,21 +33,25 @@ public class MainActivity extends Activity {
 		layout.addView(passwordEditText);
 
 		final Button submit = new Button(this);
-		submit.setText("送信");
+		submit.setText("登録/送信");
 		submit.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				final String user = userEditText.getText().toString();
 				final String password = passwordEditText.getText().toString();
-				
+				// SharedPreferencesに保存
+				final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+		        final Editor editor = sharedPreferences.edit();
+		        editor.putString("u", user);
+		        editor.putString("p", password);
+		        editor.commit();
+
 				final Intent intent = new Intent(getBaseContext(), ImhereService.class);
-				intent.putExtra("user", user);
-				intent.putExtra("password", password);
 				startService(intent);
 			}
 		});
 		layout.addView(submit);
-		
+
 		final Button stopButton = new Button(this);
 		stopButton.setText("停止");
 		stopButton.setOnClickListener(new OnClickListener(){
@@ -57,9 +60,9 @@ public class MainActivity extends Activity {
 				stopService(new Intent(getBaseContext(),ImhereService.class));
 			}
 		});
-		
+
 		layout.addView(stopButton);
-		
+
 	}
 
 	@Override

@@ -2,7 +2,6 @@ package jp.ergo.android.imhere;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -12,6 +11,7 @@ import java.util.TimerTask;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -21,6 +21,7 @@ import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.common.collect.Lists;
@@ -56,8 +57,10 @@ public class ImhereService extends Service implements LocationListener {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d(TAG, "onStartCommand");
 		final Handler handler = new Handler();
-		mUser = intent.getStringExtra("user");	// コールバック関数内で使いたいので変数に入れとく。
-		mPassword = intent.getStringExtra("password"); // コールバック関数内で使いたいので変数に入れとく。
+
+		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+		mUser = sp.getString("u", ""); // コールバック関数内で使いたいので変数に入れとく。
+		mPassword = sp.getString("p", ""); // コールバック関数内で使いたいので変数に入れとく。
 		mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);	// onDestroy()で後始末をしたいので変数に入れる。
 
 		// タスクを実行。
@@ -74,9 +77,7 @@ public class ImhereService extends Service implements LocationListener {
 				});
 			}
 		};
-//		mTimer.schedule(task, DELAY, PERIOD);
-		
-		System.out.println(stringA());
+		mTimer.schedule(task, DELAY, PERIOD);
 
 		return START_STICKY;
 	}
@@ -95,7 +96,7 @@ public class ImhereService extends Service implements LocationListener {
 			@Override
 			public void run() {
 				final String title = "テスト送信";
-				final String address = String.format("%s%s(%f, %f)",
+				final String address = String.format(Locale.JAPANESE, "%s%s(%f, %f)",
 						getAddress(location.getLatitude(), location.getLongitude())
 						,System.getProperty("line.separator")
 						,location.getLatitude()
