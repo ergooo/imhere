@@ -1,12 +1,15 @@
 package jp.ergo.android.imhere;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.preference.PreferenceManager;
+import android.os.StrictMode;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -25,13 +28,14 @@ public class MainActivity extends Activity {
 		setContentView(layout);
 
 		final EditText userEditText= new EditText(this);
+		userEditText.setText(JNIAccessor.stringA());
 		final EditText passwordEditText = new EditText(this);
-
+		passwordEditText.setText(JNIAccessor.stringB());
 		layout.addView(userEditText);
 		layout.addView(passwordEditText);
 
 		final Button submit = new Button(this);
-		submit.setText("登録/送信");
+		submit.setText("AlarmManager登録");
 		submit.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -44,23 +48,29 @@ public class MainActivity extends Activity {
 		        editor.putString("p", password);
 		        editor.commit();
 
-				final Intent intent = new Intent(getBaseContext(), ImhereService.class);
-				startService(intent);
+				final AlarmManager alarmManager = (AlarmManager) MainActivity.this.getSystemService(Context.ALARM_SERVICE);
+				final Intent serviceIntent = new Intent(MainActivity.this, StartupReceiver.class);
+				serviceIntent.setAction(StartupReceiver.ACTION_PUSH_IMHERE);
+
+				final PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+				alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
 			}
 		});
 		layout.addView(submit);
-
-		final Button stopButton = new Button(this);
-		stopButton.setText("停止");
-		stopButton.setOnClickListener(new OnClickListener(){
+		final Button stopAlarmButton = new Button(this);
+		stopAlarmButton.setText("Alarm停止");
+		stopAlarmButton.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
-				stopService(new Intent(getBaseContext(),ImhereService.class));
+				final AlarmManager alarmManager = (AlarmManager) MainActivity.this.getSystemService(Context.ALARM_SERVICE);
+				final Intent serviceIntent = new Intent(MainActivity.this, StartupReceiver.class);
+				serviceIntent.setAction(StartupReceiver.ACTION_PUSH_IMHERE);
+
+				final PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+				alarmManager.cancel(pendingIntent);
 			}
 		});
-
-		layout.addView(stopButton);
-
+		layout.addView(stopAlarmButton);
 	}
 
 	@Override

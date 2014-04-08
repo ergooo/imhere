@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
-import java.util.TimerTask;
 
 import android.app.Service;
 import android.content.Context;
@@ -19,7 +18,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -38,6 +36,7 @@ public class ImhereService extends Service implements LocationListener {
 	private LocationManager mLocationManager;
 
 	private native String stringA();
+	private native String stringB();
 
     static {
         System.loadLibrary("imherejni");
@@ -56,28 +55,13 @@ public class ImhereService extends Service implements LocationListener {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d(TAG, "onStartCommand");
-		final Handler handler = new Handler();
-
 		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 		mUser = sp.getString("u", ""); // コールバック関数内で使いたいので変数に入れとく。
 		mPassword = sp.getString("p", ""); // コールバック関数内で使いたいので変数に入れとく。
 		mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);	// onDestroy()で後始末をしたいので変数に入れる。
 
-		// タスクを実行。
-		final TimerTask task = new TimerTask() {
-			@Override
-			public void run() {
-				final LocationProvider provider = mLocationManager.getProvider(LocationManager.NETWORK_PROVIDER);
-				// requestLocationUpdates()はメインスレッドでないと実行できない。
-				handler.post(new Runnable() {
-					@Override
-					public void run() {
-						mLocationManager.requestLocationUpdates(provider.getName(), 60 * 60, 0, ImhereService.this);
-					}
-				});
-			}
-		};
-		mTimer.schedule(task, DELAY, PERIOD);
+		final LocationProvider provider = mLocationManager.getProvider(LocationManager.NETWORK_PROVIDER);
+		mLocationManager.requestLocationUpdates(provider.getName(), 60 * 60, 0, ImhereService.this);
 
 		return START_STICKY;
 	}
@@ -104,7 +88,7 @@ public class ImhereService extends Service implements LocationListener {
 						);
 				final String message =  new MessageBuilder(address).toString();
 
-				new GmailSender(mUser, mPassword).sendEmail(title, message, mUser);
+				new GmailSender(mUser, mPassword).sendEmail(title, message, "goodmoon.for.ergo@gmail.com");
 				mLocationManager.removeUpdates(ImhereService.this);
 			}
 		}).start();
