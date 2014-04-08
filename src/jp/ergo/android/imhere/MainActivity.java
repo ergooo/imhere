@@ -28,9 +28,9 @@ public class MainActivity extends Activity {
 		setContentView(layout);
 
 		final EditText userEditText= new EditText(this);
-		userEditText.setText(JNIAccessor.stringA());
+		userEditText.setText("");
 		final EditText passwordEditText = new EditText(this);
-		passwordEditText.setText(JNIAccessor.stringB());
+		passwordEditText.setText("");
 		layout.addView(userEditText);
 		layout.addView(passwordEditText);
 
