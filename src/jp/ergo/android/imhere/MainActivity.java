@@ -24,7 +24,7 @@ public class MainActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 
 		final LinearLayout layout = new LinearLayout(this);
-		setContentView(layout);
+		setContentView(R.layout.activity_main);
 
 		final Button button = new Button(this);
 		button.setText("Gmailアカウント");
