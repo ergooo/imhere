@@ -18,11 +18,16 @@ package jp.ergo.android.imhere.fragment;
 
 import jp.ergo.android.imhere.R;
 import android.app.Activity;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -66,6 +71,22 @@ public class PasswordActivity extends Activity {
         // パスワードを表示するオプションのチェック変更リスナーを設定
         mPasswordDisplayCheck
                 .setOnCheckedChangeListener(new OnPasswordDisplayCheckedChangeListener());
+
+        final EditText mailEdit = (EditText)findViewById(R.id.mail_edit);
+        final Button submitButton = (Button)findViewById(R.id.submitButton);
+        submitButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				final String mail = mailEdit.getText().toString();
+				final String pass = mPasswordEdit.getText().toString();
+				final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(PasswordActivity.this);
+				final Editor editor = sharedPreferences.edit();
+				editor.putString("u", mail);
+				editor.putString("p", pass);
+				editor.commit();
+			}
+		});
     }
 
     @Override
