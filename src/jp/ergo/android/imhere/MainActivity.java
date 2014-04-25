@@ -1,6 +1,6 @@
 package jp.ergo.android.imhere;
 
-import android.app.Activity;
+import jp.ergo.android.imhere.gmailaccount.GmailAccountActivity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -9,7 +9,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.os.StrictMode;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,15 +17,46 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		final LinearLayout layout = new LinearLayout(this);
-		layout.setOrientation(LinearLayout.VERTICAL);
 		setContentView(layout);
+
+		final Button button = new Button(this);
+		button.setText("Gmailアカウント");
+		button.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(MainActivity.this, GmailAccountActivity.class);
+				startActivity(intent);
+			}
+		});
+
+
+		layout.addView(button);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.activity_main, menu);
+		return true;
+	}
+
+	@Override
+	public void onDestroy(){
+		stopService(new Intent(getBaseContext(),ImhereService.class));
+		super.onDestroy();
+	}
+
+	private LinearLayout createLayout(){
+		final LinearLayout layout = new LinearLayout(this);
+		layout.setOrientation(LinearLayout.VERTICAL);
 
 		final EditText userEditText= new EditText(this);
 		userEditText.setText("");
@@ -43,10 +74,10 @@ public class MainActivity extends Activity {
 				final String password = passwordEditText.getText().toString();
 				// SharedPreferencesに保存
 				final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-		        final Editor editor = sharedPreferences.edit();
-		        editor.putString("u", user);
-		        editor.putString("p", password);
-		        editor.commit();
+				final Editor editor = sharedPreferences.edit();
+				editor.putString("u", user);
+				editor.putString("p", password);
+				editor.commit();
 
 				final AlarmManager alarmManager = (AlarmManager) MainActivity.this.getSystemService(Context.ALARM_SERVICE);
 				final Intent serviceIntent = new Intent(MainActivity.this, StartupReceiver.class);
@@ -71,18 +102,6 @@ public class MainActivity extends Activity {
 			}
 		});
 		layout.addView(stopAlarmButton);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.activity_main, menu);
-		return true;
-	}
-
-	@Override
-	public void onDestroy(){
-		stopService(new Intent(getBaseContext(),ImhereService.class));
-		super.onDestroy();
+		return layout;
 	}
 }

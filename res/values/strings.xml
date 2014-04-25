@@ -2,7 +2,11 @@
 <resources>
 
     <string name="app_name">ImHere</string>
-    <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
-
+    <string name="mail">メールアドレス</string>
+    <string name="hint_mail">example@gmail.com</string>
+    <string name="password">パスワード</string>
+    <string name="hint_password">パスワードを入力</string>
+    <string name="display_password">パスワードを表示する</string>
+    <string name="alert_password">※パスワードを表示する場合、後ろから覗き見されないよう注意してください</string>
 </resources>
