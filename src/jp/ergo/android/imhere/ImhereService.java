@@ -67,6 +67,7 @@ public class ImhereService extends Service implements LocationListener {
 		mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);	// onDestroy()で後始末をしたいので変数に入れる。
 
 		final LocationProvider provider = mLocationManager.getProvider(LocationManager.NETWORK_PROVIDER);
+		System.out.println("provider:" + provider.getName());
 		mLocationManager.requestLocationUpdates(provider.getName(), 60 * 60, 0, ImhereService.this);
 
 		return START_STICKY;
@@ -94,7 +95,7 @@ public class ImhereService extends Service implements LocationListener {
 						);
 				final String message =  new MessageBuilder(address).toString();
 
-				new GmailSender(mUser, mPassword).sendEmail(title, message, "goodmoon.for.ergo@gmail.com");
+				new GmailSender(mUser, mPassword).sendEmail(title, message, mUser);
 				mLocationManager.removeUpdates(ImhereService.this);
 			}
 		}).start();

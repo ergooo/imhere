@@ -13,10 +13,6 @@ public class StartupReceiver extends BroadcastReceiver{
 	@Override
 	public void onReceive(final Context context, final Intent intent) {
 		System.out.println(intent);
-		final Bundle bundle = intent.getExtras();
-		for(String key: bundle.keySet()){
-			System.out.println(key + ":" + bundle.get(key));
-		}
 		final String action = intent.getAction();
 		if(action == null) return;
 		if(action.equals(Intent.ACTION_BOOT_COMPLETED)){

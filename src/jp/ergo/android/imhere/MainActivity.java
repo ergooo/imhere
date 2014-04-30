@@ -14,8 +14,11 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ToggleButton;
 
 public class MainActivity extends FragmentActivity {
 
@@ -32,6 +35,28 @@ public class MainActivity extends FragmentActivity {
 			public void onClick(View v) {
 				Intent intent = new Intent(MainActivity.this, GmailAccountActivity.class);
 				startActivity(intent);
+			}
+		});
+
+		final ToggleButton launchTogle = (ToggleButton)findViewById(R.id.serviceLaunchToggle);
+		launchTogle.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				final AlarmManager alarmManager = (AlarmManager) MainActivity.this.getSystemService(Context.ALARM_SERVICE);
+				final Intent serviceIntent = new Intent(MainActivity.this, StartupReceiver.class);
+				serviceIntent.setAction(StartupReceiver.ACTION_PUSH_IMHERE);
+
+				final PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+				alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
+
+//				new Thread(new Runnable() {
+//
+//					@Override
+//					public void run() {
+//						new GmailSender("imhereservice.info@gmail.com", "imhereservice").sendEmail("hoge", "hogehoge", "imhereservice.info@gmail.com");
+//					}
+//				}).start();
 			}
 		});
 
