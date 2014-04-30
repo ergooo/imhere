@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -58,6 +59,11 @@ public class ImhereService extends Service implements LocationListener {
 		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 		mUser = sp.getString("u", ""); // コールバック関数内で使いたいので変数に入れとく。
 		mPassword = sp.getString("p", ""); // コールバック関数内で使いたいので変数に入れとく。
+		System.out.println("mail is \"" + mUser + "\"" + "\npassword is \"" + mPassword + "\"");
+
+
+		if(mUser.equals("") || mPassword.equals("")) return START_STICKY;
+
 		mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);	// onDestroy()で後始末をしたいので変数に入れる。
 
 		final LocationProvider provider = mLocationManager.getProvider(LocationManager.NETWORK_PROVIDER);

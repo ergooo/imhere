@@ -1,19 +1,24 @@
 package jp.ergo.android.imhere.gmailaccount;
 
 import jp.ergo.android.imhere.R;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.Toast;
 
 public class GmailAccountFragment extends Fragment{
 
@@ -43,24 +48,44 @@ public class GmailAccountFragment extends Fragment{
     	super.onStart();
 
     	// Viewの取得
-    	EditText mPasswordEdit = (EditText) getView().findViewById(R.id.password_edit);
-    	mPasswordDisplayCheck = (CheckBox) getView().findViewById(R.id.password_display_check);
+    	final EditText passwordEdit = (EditText) getView().findViewById(R.id.password_edit);
+        mPasswordDisplayCheck = (CheckBox) getView().findViewById(R.id.password_display_check);
 
-    	// 前回入力パスワードがあるか
-    	if (getPreviousPassword() != null) {
-    		// ★ポイント4★ Activity初期表示時に前回入力したパスワードがある場合、
-    		// 前回入力パスワードの桁数を推測されないよう固定桁数の●文字でダミー表示する
+        // 前回入力パスワードがあるか
+        if (getPreviousPassword() != null) {
+            // ★ポイント4★ Activity初期表示時に前回入力したパスワードがある場合、
+        	// 前回入力パスワードの桁数を推測されないよう固定桁数の●文字でダミー表示する
 
-    		// 表示はダミーパスワードにする
-    		mPasswordEdit.setText("*********");
-    		// パスワード入力時にダミーパスワードをクリアするため、テキスト変更リスナーを設定
-    		mPasswordEdit.addTextChangedListener(new PasswordEditTextWatcher(mPasswordEdit));
-    		// ダミーパスワードフラグを設定する
-    		mIsDummyPassword = true;
-    	}
+            // 表示はダミーパスワードにする
+            passwordEdit.setText("**********");
+            // パスワード入力時にダミーパスワードをクリアするため、テキスト変更リスナーを設定
+            passwordEdit.addTextChangedListener(new PasswordEditTextWatcher(passwordEdit));
+            // ダミーパスワードフラグを設定する
+            mIsDummyPassword = true;
+        }
 
-    	// パスワードを表示するオプションのチェック変更リスナーを設定
-    	mPasswordDisplayCheck.setOnCheckedChangeListener(new OnPasswordDisplayCheckedChangeListener(mPasswordEdit));
+        // パスワードを表示するオプションのチェック変更リスナーを設定
+        mPasswordDisplayCheck
+                .setOnCheckedChangeListener(new OnPasswordDisplayCheckedChangeListener(passwordEdit));
+
+        final EditText mailEdit = (EditText)getView().findViewById(R.id.mail_edit);
+        mailEdit.setText(getPreviousEmail());
+        final Button submitButton = (Button)getView().findViewById(R.id.submitButton);
+        submitButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				System.out.println("TOUCH!!!");
+				final String mail = mailEdit.getText().toString();
+				final String pass = passwordEdit.getText().toString();
+				final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+				final Editor editor = sharedPreferences.edit();
+				editor.putString("u", mail);
+				editor.putString("p", pass);
+				editor.commit();
+				Toast.makeText(getActivity(), "mail is \"" + mail + "\"" + "\npassword is \"" + pass + "\"", Toast.LENGTH_SHORT).show();
+			}
+		});
     }
 
     @Override
@@ -162,8 +187,14 @@ public class GmailAccountFragment extends Fragment{
      */
     private String getPreviousPassword() {
         // 保存パスワードを復帰させたい場合にパスワード文字列を返す
-        // パスワードを保存しない用途ではnullを返す
-        return "hirake5ma";
+    	// パスワードを保存しない用途ではnullを返す
+    	final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+    	return sharedPreferences.getString("p", "");
+    }
+
+    private String getPreviousEmail(){
+    	final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		return sharedPreferences.getString("u", "");
     }
 
     /**

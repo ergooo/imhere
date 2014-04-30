@@ -23,11 +23,9 @@ public class MainActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		final LinearLayout layout = new LinearLayout(this);
 		setContentView(R.layout.activity_main);
 
-		final Button button = new Button(this);
-		button.setText("Gmailアカウント");
+		final View button = findViewById(R.id.accountSettingItem);
 		button.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -37,8 +35,6 @@ public class MainActivity extends FragmentActivity {
 			}
 		});
 
-
-		layout.addView(button);
 	}
 
 	@Override

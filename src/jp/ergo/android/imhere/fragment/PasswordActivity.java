@@ -73,11 +73,13 @@ public class PasswordActivity extends Activity {
                 .setOnCheckedChangeListener(new OnPasswordDisplayCheckedChangeListener());
 
         final EditText mailEdit = (EditText)findViewById(R.id.mail_edit);
+        mailEdit.setText(getPreviousEmail());
         final Button submitButton = (Button)findViewById(R.id.submitButton);
         submitButton.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
+				System.out.println("TOUCH!!!");
 				final String mail = mailEdit.getText().toString();
 				final String pass = mPasswordEdit.getText().toString();
 				final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(PasswordActivity.this);
@@ -85,6 +87,7 @@ public class PasswordActivity extends Activity {
 				editor.putString("u", mail);
 				editor.putString("p", pass);
 				editor.commit();
+				Toast.makeText(PasswordActivity.this, "mail is \"" + mail + "\"" + "\npassword is \"" + pass + "\"", Toast.LENGTH_SHORT).show();
 			}
 		});
     }
@@ -188,8 +191,14 @@ public class PasswordActivity extends Activity {
      */
     private String getPreviousPassword() {
         // 保存パスワードを復帰させたい場合にパスワード文字列を返す
-        // パスワードを保存しない用途ではnullを返す
-        return "hirake5ma";
+    	// パスワードを保存しない用途ではnullを返す
+    	final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(PasswordActivity.this);
+    	return sharedPreferences.getString("p", "");
+    }
+
+    private String getPreviousEmail(){
+    	final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(PasswordActivity.this);
+		return sharedPreferences.getString("u", "");
     }
 
     /**
