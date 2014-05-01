@@ -101,7 +101,7 @@ public class ImhereService extends Service implements LocationListener {
 				final String message =  new MessageBuilder(address).toString();
 
 				System.out.println("message: " + message);
-//				new GmailSender(mUser, mPassword).sendEmail(title, message, mUser);
+				new GmailSender(mUser, mPassword).sendEmail(title, message, mUser);
 				mLocationManager.removeUpdates(ImhereService.this);
 			}
 		}).start();

@@ -114,6 +114,17 @@ public class MainActivity extends FragmentActivity {
 		final String selectedItem = intervals[getSelectedIntervalFromPreferences(this)];
 		((TextView)findViewById(R.id.notifyIntervalSelectedTextView)).setText(selectedItem);
 
+		// 位置情報サービス設定
+		final View locationServiceSettings = findViewById(R.id.locationSettingItem);
+		locationServiceSettings.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent intent=new Intent("android.settings.LOCATION_SOURCE_SETTINGS");
+				startActivity(intent);
+			}
+		});
+
 	}
 
 	private Dialog createIntervalSelectDialog(final Context context){
