@@ -21,6 +21,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
@@ -67,6 +68,29 @@ public class MainActivity extends FragmentActivity {
 				}
 			}
 		});
+
+		// ブート時にサービスを起動
+		final View launchOnBootItem = findViewById(R.id.serviceLaunchOnBootItem);
+		final CheckBox launchOnBootCheckBox = (CheckBox)findViewById(R.id.serviceLaunchOnBootCheckbox);
+		final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+		final boolean isLaunchOnBoot = sharedPreferences.getBoolean("launch_on_boot", false);
+		launchOnBootCheckBox.setChecked(isLaunchOnBoot);
+		launchOnBootCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				final Editor editor = sharedPreferences.edit();
+				editor.putBoolean("launch_on_boot", isChecked);
+				editor.commit();
+			}
+		});
+		launchOnBootItem.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				launchOnBootCheckBox.setChecked(!launchOnBootCheckBox.isChecked());
+			}
+		});
+
 
 		// インターバル選択
 		final View intervalItem = findViewById(R.id.notifyIntervalItem);

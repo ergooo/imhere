@@ -12,4 +12,5 @@
     <string name="alert_password">※パスワードを表示する場合、後ろから覗き見されないよう注意してください</string>
     <string name="interval_label">通知間隔</string>
     <string name="service_launch_label">サービスを起動</string>
+    <string name="service_launch_On_boot_label">ブート時にサービスを起動</string>
 </resources>

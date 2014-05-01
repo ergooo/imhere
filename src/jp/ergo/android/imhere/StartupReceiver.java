@@ -5,7 +5,8 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 public class StartupReceiver extends BroadcastReceiver{
 //	public static final String ACTION_PUSH_IMHERE = "imhere.action.PUSH_IMHERE";
@@ -17,11 +18,14 @@ public class StartupReceiver extends BroadcastReceiver{
 		if(action == null) return;
 		if(action.equals(Intent.ACTION_BOOT_COMPLETED)){
 			System.out.println("action is ACTION_BOOT_COMPLETED");
+			final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+			final boolean isLaunchOnBoot = sharedPreferences.getBoolean("launch_on_boot", false);
+			if(!isLaunchOnBoot) return;
+
 			final Intent serviceIntent = new Intent(context, ImhereService.class);
 			context.startService(serviceIntent);
 			// 端末起動時にAlarmManagerに登録する
 			final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-//			final Intent serviceIntent = new Intent(context, ImhereService.class);
 			final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 			final int selectedInterval = MainActivity.getSelectedIntervalFromPreferences(context);
 			final Interval interval = Interval.gen(selectedInterval);
