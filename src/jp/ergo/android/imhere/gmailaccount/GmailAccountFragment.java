@@ -76,7 +76,7 @@ public class GmailAccountFragment extends Fragment{
 			@Override
 			public void onClick(View v) {
 				final String mail = mailEdit.getText().toString();
-				final String pass = passwordEdit.getText().toString();
+				final String pass = mIsDummyPassword ? getPreviousPassword() : passwordEdit.getText().toString();
 				final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 				final Editor editor = sharedPreferences.edit();
 				editor.putString("u", mail);
@@ -195,39 +195,4 @@ public class GmailAccountFragment extends Fragment{
     	final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 		return sharedPreferences.getString("u", "");
     }
-
-    /**
-     * キャンセルボタンの押下処理
-     *
-     * @param view
-     */
-    public void onClickCancelButton(View view) {
-    }
-
-    /**
-     * OKボタンの押下処理
-     *
-     * @param view
-     */
-    public void onClickOkButton(View view) {
-        // passwordを保存するとか認証に使うとか必要な処理を行う
-//
-//        String password = null;
-//
-//        if (mIsDummyPassword) {
-//            // 最後までダミーパスワード表示だった場合は前回入力パスワードを確定パスワードとする
-//            password = getPreviousPassword();
-//        } else {
-//            // ダミーパスワード表示じゃない場合はユーザー入力パスワードを確定パスワードとする
-//            password = mPasswordEdit.getText().toString();
-//        }
-//
-//        // パスワードをToast表示する
-//        Toast.makeText(getActivity(), "password is \"" + password + "\"",
-//                Toast.LENGTH_SHORT).show();
-//
-////        // Activityを閉じる
-////        finish();
-    }
-
 }
