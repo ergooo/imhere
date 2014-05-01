@@ -1,6 +1,10 @@
 package jp.ergo.android.imhere;
 
+import java.util.List;
+
 import jp.ergo.android.imhere.gmailaccount.GmailAccountActivity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -39,24 +43,21 @@ public class MainActivity extends FragmentActivity {
 		});
 
 		final ToggleButton launchTogle = (ToggleButton)findViewById(R.id.serviceLaunchToggle);
+		launchTogle.setChecked(isServiceRunning());
 		launchTogle.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
 				final AlarmManager alarmManager = (AlarmManager) MainActivity.this.getSystemService(Context.ALARM_SERVICE);
-				final Intent serviceIntent = new Intent(MainActivity.this, StartupReceiver.class);
-				serviceIntent.setAction(StartupReceiver.ACTION_PUSH_IMHERE);
-
-				final PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-				alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
-
-//				new Thread(new Runnable() {
-//
-//					@Override
-//					public void run() {
-//						new GmailSender("imhereservice.info@gmail.com", "imhereservice").sendEmail("hoge", "hogehoge", "imhereservice.info@gmail.com");
-//					}
-//				}).start();
+				final Intent serviceIntent = new Intent(MainActivity.this, ImhereService.class);
+				final PendingIntent pendingIntent = PendingIntent.getService(MainActivity.this, 0, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+				if(isChecked){
+					alarmManager.cancel(pendingIntent);
+					alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis(), 5000, pendingIntent);
+				}else{
+					alarmManager.cancel(pendingIntent);
+				}
 			}
 		});
 
@@ -73,6 +74,18 @@ public class MainActivity extends FragmentActivity {
 	public void onDestroy(){
 		stopService(new Intent(getBaseContext(),ImhereService.class));
 		super.onDestroy();
+	}
+
+	private boolean isServiceRunning() {
+	    final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+	    final List<RunningServiceInfo> services = activityManager.getRunningServices(Integer.MAX_VALUE);
+
+	    for (final RunningServiceInfo info : services) {
+	        if (ImhereService.class.getCanonicalName().equals(info.service.getClassName())) {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 
 	private LinearLayout createLayout(){
@@ -102,7 +115,6 @@ public class MainActivity extends FragmentActivity {
 
 				final AlarmManager alarmManager = (AlarmManager) MainActivity.this.getSystemService(Context.ALARM_SERVICE);
 				final Intent serviceIntent = new Intent(MainActivity.this, StartupReceiver.class);
-				serviceIntent.setAction(StartupReceiver.ACTION_PUSH_IMHERE);
 
 				final PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 				alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
@@ -116,7 +128,6 @@ public class MainActivity extends FragmentActivity {
 			public void onClick(View v) {
 				final AlarmManager alarmManager = (AlarmManager) MainActivity.this.getSystemService(Context.ALARM_SERVICE);
 				final Intent serviceIntent = new Intent(MainActivity.this, StartupReceiver.class);
-				serviceIntent.setAction(StartupReceiver.ACTION_PUSH_IMHERE);
 
 				final PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 				alarmManager.cancel(pendingIntent);

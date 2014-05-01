@@ -74,8 +74,7 @@ public class ImhereService extends Service implements LocationListener {
 	}
 	@Override
 	public void onDestroy() {
-		mTimer.cancel();
-		mLocationManager.removeUpdates(this);
+		if(mLocationManager != null) mLocationManager.removeUpdates(this);
 		super.onDestroy();
 
 		Log.d(TAG, "onDestroy");
