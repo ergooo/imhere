@@ -16,13 +16,16 @@ public class StartupReceiver extends BroadcastReceiver{
 		final String action = intent.getAction();
 		if(action == null) return;
 		if(action.equals(Intent.ACTION_BOOT_COMPLETED)){
+			System.out.println("action is ACTION_BOOT_COMPLETED");
+			final Intent serviceIntent = new Intent(context, ImhereService.class);
+			context.startService(serviceIntent);
 			// 端末起動時にAlarmManagerに登録する
 			final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-			final Intent serviceIntent = new Intent(context, ImhereService.class);
+//			final Intent serviceIntent = new Intent(context, ImhereService.class);
 			final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 			final int selectedInterval = MainActivity.getSelectedIntervalFromPreferences(context);
 			final Interval interval = Interval.gen(selectedInterval);
-			alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval.getDuration(), pendingIntent);
+			alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis()+2000, interval.getDuration(), pendingIntent);
 		}
 	}
 }
