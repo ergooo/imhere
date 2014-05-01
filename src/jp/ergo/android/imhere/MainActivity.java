@@ -111,12 +111,12 @@ public class MainActivity extends FragmentActivity {
 
 	}
 
-	private int getSelectedIntervalFromPreferences(final Context context){
-		final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+	static int getSelectedIntervalFromPreferences(final Context context){
+		final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		return sharedPreferences.getInt("interval", Interval.DAY.ordinal());
 	}
 
-	private void setSelectedIntervalToPreferences(final Context context, final int interval){
+	private static void setSelectedIntervalToPreferences(final Context context, final int interval){
 		final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		final Editor editor = sharedPreferences.edit();
 		editor.putInt("interval", interval);
