@@ -43,17 +43,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="サービスを起動" />
+                    android:text="@string/service_launch_label" />
 
                 <ToggleButton
                     android:id="@+id/serviceLaunchToggle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ToggleButton" />
+                    />
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/notifyDurationItem"
+                android:id="@+id/notifyIntervalItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -61,18 +61,17 @@
                 android:paddingTop="5dp" >
 
                 <TextView
-                    android:id="@+id/notifyDurationLabel"
+                    android:id="@+id/notifyIntervalLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="通知間隔" />
+                    android:text="@string/interval_label" />
 
                 <TextView
-                    android:id="@+id/notifyDurationSelectedTextView"
+                    android:id="@+id/notifyIntervalSelectedTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="1時間"
                     android:textColor="@android:color/darker_gray"
-                    android:textSize="10dp" />
+                    android:textSize="12sp" />
 
             </LinearLayout>
 

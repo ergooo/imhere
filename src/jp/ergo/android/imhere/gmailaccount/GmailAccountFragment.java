@@ -75,7 +75,6 @@ public class GmailAccountFragment extends Fragment{
 
 			@Override
 			public void onClick(View v) {
-				System.out.println("TOUCH!!!");
 				final String mail = mailEdit.getText().toString();
 				final String pass = passwordEdit.getText().toString();
 				final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
