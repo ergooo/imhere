@@ -27,7 +27,7 @@ public class StartupReceiver extends BroadcastReceiver{
 			// 端末起動時にAlarmManagerに登録する
 			final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 			final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-			final int selectedInterval = MainActivity.getSelectedIntervalFromPreferences(context);
+			final int selectedInterval = ImhereActivity.getSelectedIntervalFromPreferences(context);
 			final Interval interval = Interval.gen(selectedInterval);
 			alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis()+2000, interval.getDuration(), pendingIntent);
 		}

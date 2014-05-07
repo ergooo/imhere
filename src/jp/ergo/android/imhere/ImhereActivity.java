@@ -27,7 +27,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-public class MainActivity extends FragmentActivity {
+public class ImhereActivity extends FragmentActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +42,7 @@ public class MainActivity extends FragmentActivity {
 
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(MainActivity.this, GmailAccountActivity.class);
+				Intent intent = new Intent(ImhereActivity.this, GmailAccountActivity.class);
 				startActivity(intent);
 			}
 		});
@@ -55,12 +55,12 @@ public class MainActivity extends FragmentActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-				final AlarmManager alarmManager = (AlarmManager) MainActivity.this.getSystemService(Context.ALARM_SERVICE);
-				final Intent serviceIntent = new Intent(MainActivity.this, ImhereService.class);
-				final PendingIntent pendingIntent = PendingIntent.getService(MainActivity.this, 0, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+				final AlarmManager alarmManager = (AlarmManager) ImhereActivity.this.getSystemService(Context.ALARM_SERVICE);
+				final Intent serviceIntent = new Intent(ImhereActivity.this, ImhereService.class);
+				final PendingIntent pendingIntent = PendingIntent.getService(ImhereActivity.this, 0, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 				if(isChecked){
 					alarmManager.cancel(pendingIntent);
-					final int selectedInterval = getSelectedIntervalFromPreferences(MainActivity.this);
+					final int selectedInterval = getSelectedIntervalFromPreferences(ImhereActivity.this);
 					final Interval interval = Interval.gen(selectedInterval);
 					alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis(), interval.getDuration(), pendingIntent);
 				}else{
@@ -72,7 +72,7 @@ public class MainActivity extends FragmentActivity {
 		// ブート時にサービスを起動
 		final View launchOnBootItem = findViewById(R.id.serviceLaunchOnBootItem);
 		final CheckBox launchOnBootCheckBox = (CheckBox)findViewById(R.id.serviceLaunchOnBootCheckbox);
-		final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+		final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ImhereActivity.this);
 		final boolean isLaunchOnBoot = sharedPreferences.getBoolean("launch_on_boot", false);
 		launchOnBootCheckBox.setChecked(isLaunchOnBoot);
 		launchOnBootCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -101,7 +101,7 @@ public class MainActivity extends FragmentActivity {
 				final DialogFragment dialogFragment = new DialogFragment(){
 					@Override
 			        public Dialog onCreateDialog(Bundle savedInstanceState) {
-						return createIntervalSelectDialog(MainActivity.this);
+						return createIntervalSelectDialog(ImhereActivity.this);
 					}
 				};
 				dialogFragment.show(getSupportFragmentManager(), "interval_select");
@@ -137,7 +137,7 @@ public class MainActivity extends FragmentActivity {
 			@Override
 			public void onClick(final DialogInterface dialog, final int which) {
 				((TextView)findViewById(R.id.notifyIntervalSelectedTextView)).setText(Interval.gen(which).getDisplayName());
-				setSelectedIntervalToPreferences(MainActivity.this, which);
+				setSelectedIntervalToPreferences(ImhereActivity.this, which);
 				dialog.dismiss();
 			}
 		});

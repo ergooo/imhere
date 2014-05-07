@@ -74,6 +74,7 @@ public class ImhereService extends Service implements LocationListener {
 			mLocationManager.requestLocationUpdates(provider.getName(), 0, 0, ImhereService.this);
 		}else{
 			// TODO ネットワークもGPSもなかった場合
+			System.out.println("nothing is enabled");
 		}
 
 		return START_STICKY;
