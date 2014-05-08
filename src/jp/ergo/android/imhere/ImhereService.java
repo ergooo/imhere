@@ -87,6 +87,8 @@ public class ImhereService extends Service implements LocationListener {
 
 	@Override
 	public void onLocationChanged(final Location location) {
+		System.out.println("onLocationChanged");
+		mLocationManager.removeUpdates(ImhereService.this);
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -101,7 +103,7 @@ public class ImhereService extends Service implements LocationListener {
 
 				System.out.println("message: " + message);
 				new GmailSender(mUser, mPassword).sendEmail(title, message, mUser);
-				mLocationManager.removeUpdates(ImhereService.this);
+
 			}
 		}).start();
 	}

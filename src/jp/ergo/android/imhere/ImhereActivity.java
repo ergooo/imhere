@@ -30,7 +30,6 @@ public class ImhereActivity extends FragmentActivity {
 
 	@Override
 	public void onDestroy(){
-		stopService(new Intent(getBaseContext(),ImhereService.class));
 		super.onDestroy();
 	}
 

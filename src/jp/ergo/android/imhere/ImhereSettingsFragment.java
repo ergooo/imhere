@@ -56,6 +56,7 @@ public class ImhereSettingsFragment extends PreferenceFragment implements OnShar
 	@Override
 	public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
 		System.out.println(key);
+		if(key == null) return;
 		if(key.equals(mPrefKeyLaunch)){
 			final AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
 			final Intent serviceIntent = new Intent(getActivity(), ImhereService.class);
@@ -70,6 +71,11 @@ public class ImhereSettingsFragment extends PreferenceFragment implements OnShar
 			}else{
 				alarmManager.cancel(pendingIntent);
 			}
+		}
+		if(key.equals(mPrefKeyInterval)){
+			final Preference intervalPreference = findPreference(mPrefKeyInterval);
+	        final String interval = sharedPreferences.getString(mPrefKeyInterval, "");
+	        intervalPreference.setSummary(mIntervalKeyValue.get(interval));
 		}
 	}
 	@Override
