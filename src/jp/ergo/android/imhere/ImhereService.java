@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Timer;
 
 import android.app.Service;
 import android.content.Context;
@@ -28,9 +27,6 @@ import com.google.common.collect.Maps;
 public class ImhereService extends Service implements LocationListener {
 
 	private final static String TAG = "ImhereService";
-	private static final long DELAY = 1000;
-	private static final long PERIOD = 60000;
-	private final Timer mTimer = new Timer();
 	private String mUser = "";
 	private String mPassword = "";
 	private LocationManager mLocationManager;
