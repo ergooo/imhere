@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
     <PreferenceCategory android:title="@string/account">
-        <EditTextPreference
-            android:defaultValue=""
-            android:key="pref_key_mail"
-            android:title="@string/mail" />
-        <EditTextPreference
-            android:defaultValue=""
-            android:key="pref_key_pass"
-            android:password="true"
-            android:title="@string/password" />
+        <Preference android:title="@string/account_item">
+             <intent
+                android:targetPackage="jp.ergo.android.imhere"
+                android:targetClass="jp.ergo.android.imhere.gmailaccount.GmailAccountActivity" />
+        </Preference>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/launch_settings_label" >

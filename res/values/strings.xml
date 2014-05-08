@@ -3,6 +3,7 @@
 
     <string name="app_name">ImHere</string>
     <string name="account">アカウント</string>
+    <string name="account_item">アカウント設定</string>
     <string name="menu_settings">Settings</string>
     <string name="mail">メールアドレス</string>
     <string name="hint_mail">example@gmail.com</string>

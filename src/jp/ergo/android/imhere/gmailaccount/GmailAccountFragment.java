@@ -22,6 +22,8 @@ import android.widget.Toast;
 
 public class GmailAccountFragment extends Fragment{
 
+	private String mPrefKeyMail = "";
+	private String mPrefKeyPass = "";
 
     // 状態保存用のキー
     private static final String KEY_DUMMY_PASSWORD = "KEY_DUMMY_PASSWORD";
@@ -46,6 +48,8 @@ public class GmailAccountFragment extends Fragment{
     @Override
     public void onStart(){
     	super.onStart();
+    	mPrefKeyMail = getResources().getString(R.string.pref_key_mail);
+    	mPrefKeyPass = getResources().getString(R.string.pref_key_pass);
 
     	// Viewの取得
     	final EditText passwordEdit = (EditText) getView().findViewById(R.id.password_edit);
@@ -79,8 +83,8 @@ public class GmailAccountFragment extends Fragment{
 				final String pass = mIsDummyPassword ? getPreviousPassword() : passwordEdit.getText().toString();
 				final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 				final Editor editor = sharedPreferences.edit();
-				editor.putString("u", mail);
-				editor.putString("p", pass);
+				editor.putString(mPrefKeyMail, mail);
+				editor.putString(mPrefKeyPass, pass);
 				editor.commit();
 				Toast.makeText(getActivity(), "mail is \"" + mail + "\"" + "\npassword is \"" + pass + "\"", Toast.LENGTH_SHORT).show();
 			}
@@ -188,11 +192,11 @@ public class GmailAccountFragment extends Fragment{
         // 保存パスワードを復帰させたい場合にパスワード文字列を返す
     	// パスワードを保存しない用途ではnullを返す
     	final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-    	return sharedPreferences.getString("p", "");
+    	return sharedPreferences.getString(mPrefKeyPass, "");
     }
 
     private String getPreviousEmail(){
     	final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-		return sharedPreferences.getString("u", "");
+		return sharedPreferences.getString(mPrefKeyMail, "");
     }
 }

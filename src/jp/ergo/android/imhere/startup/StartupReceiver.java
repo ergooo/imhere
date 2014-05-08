@@ -33,7 +33,6 @@ public class StartupReceiver extends BroadcastReceiver{
 			final String mPrefKeyInterval = context.getResources().getString(R.string.pref_key_interval);
 			final int intervalMinutes = Integer.parseInt(sharedPreferences.getString(mPrefKeyInterval, "1440"));
 			final long intervalMillis = (long)intervalMinutes * 60L * 1000;
-			System.out.println(intervalMillis);
 			final long triggerAtMillis = System.currentTimeMillis() + (intervalMillis - (System.currentTimeMillis() % intervalMillis));
 			alarmManager.setRepeating(AlarmManager.RTC, triggerAtMillis, intervalMillis, pendingIntent);
 		}

@@ -1,13 +1,17 @@
 package jp.ergo.android.imhere;
 
+import java.util.List;
 import java.util.Map;
 
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -19,8 +23,6 @@ public class ImhereSettingsFragment extends PreferenceFragment implements OnShar
 	private Map<String, String> mIntervalKeyValue;
 
 	private String mPrefKeyInterval = "";
-	private String mPrefKeyMail = "";
-	private String mPrefKeyPass = "";
 	private String mPrefKeyLaunch = "";
 
     @Override
@@ -29,8 +31,6 @@ public class ImhereSettingsFragment extends PreferenceFragment implements OnShar
 
         // preferenceのkeyを取得
         mPrefKeyInterval = getResources().getString(R.string.pref_key_interval);
-        mPrefKeyMail = getResources().getString(R.string.pref_key_mail);
-        mPrefKeyPass = getResources().getString(R.string.pref_key_pass);
         mPrefKeyLaunch = getResources().getString(R.string.pref_key_launch);
 
 
@@ -45,7 +45,12 @@ public class ImhereSettingsFragment extends PreferenceFragment implements OnShar
         final String interval = sharedPreferences.getString(mPrefKeyInterval, "");
         intervalPreference.setSummary(mIntervalKeyValue.get(interval));
 
-        findPreference(mPrefKeyMail).setSummary(sharedPreferences.getString(mPrefKeyMail, ""));
+        // サービス起動スイッチをサービス起動状態と合わせる
+        final Editor editor = sharedPreferences.edit();
+        editor.putBoolean(mPrefKeyLaunch, isServiceRunning());
+        editor.commit();
+
+//        findPreference(mPrefKeyMail).setSummary(sharedPreferences.getString(mPrefKeyMail, ""));
     }
 
 	@Override
@@ -86,5 +91,16 @@ public class ImhereSettingsFragment extends PreferenceFragment implements OnShar
 			mapBuilder.put(intervalValue[i], intervalKey[i]);
 		}
 		return mapBuilder.build();
+	}
+	private boolean isServiceRunning() {
+	    final ActivityManager activityManager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
+	    final List<RunningServiceInfo> services = activityManager.getRunningServices(Integer.MAX_VALUE);
+
+	    for (final RunningServiceInfo info : services) {
+	        if (ImhereService.class.getCanonicalName().equals(info.service.getClassName())) {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 }

@@ -168,17 +168,6 @@ public class ImhereActivity extends FragmentActivity {
 		super.onDestroy();
 	}
 
-	private boolean isServiceRunning() {
-	    final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-	    final List<RunningServiceInfo> services = activityManager.getRunningServices(Integer.MAX_VALUE);
-
-	    for (final RunningServiceInfo info : services) {
-	        if (ImhereService.class.getCanonicalName().equals(info.service.getClassName())) {
-	            return true;
-	        }
-	    }
-	    return false;
-	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
