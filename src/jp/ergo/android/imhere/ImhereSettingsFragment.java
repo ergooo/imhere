@@ -60,7 +60,8 @@ public class ImhereSettingsFragment extends PreferenceFragment implements OnShar
 				final int intervalMinutes = Integer.parseInt(sharedPreferences.getString(mPrefKeyInterval, "1440"));
 				final long intervalMillis = (long)intervalMinutes * 60L * 1000;
 				System.out.println(intervalMillis);
-				alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis(), intervalMillis, pendingIntent);
+				final long triggerAtMillis = System.currentTimeMillis() + (intervalMillis - (System.currentTimeMillis() % intervalMillis));
+				alarmManager.setRepeating(AlarmManager.RTC, triggerAtMillis, intervalMillis, pendingIntent);
 			}else{
 				alarmManager.cancel(pendingIntent);
 			}

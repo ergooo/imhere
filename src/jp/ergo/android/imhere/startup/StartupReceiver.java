@@ -1,8 +1,6 @@
 package jp.ergo.android.imhere.startup;
 
-import jp.ergo.android.imhere.ImhereActivity;
 import jp.ergo.android.imhere.ImhereService;
-import jp.ergo.android.imhere.Interval;
 import jp.ergo.android.imhere.R;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -30,10 +28,14 @@ public class StartupReceiver extends BroadcastReceiver{
 			context.startService(serviceIntent);
 			// 端末起動時にAlarmManagerに登録する
 			final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-			final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-			final int selectedInterval = ImhereActivity.getSelectedIntervalFromPreferences(context);
-			final Interval interval = Interval.gen(selectedInterval);
-			alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis()+2000, interval.getDuration(), pendingIntent);
+			final PendingIntent pendingIntent = PendingIntent.getService(context, 0, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+			alarmManager.cancel(pendingIntent);
+			final String mPrefKeyInterval = context.getResources().getString(R.string.pref_key_interval);
+			final int intervalMinutes = Integer.parseInt(sharedPreferences.getString(mPrefKeyInterval, "1440"));
+			final long intervalMillis = (long)intervalMinutes * 60L * 1000;
+			System.out.println(intervalMillis);
+			final long triggerAtMillis = System.currentTimeMillis() + (intervalMillis - (System.currentTimeMillis() % intervalMillis));
+			alarmManager.setRepeating(AlarmManager.RTC, triggerAtMillis, intervalMillis, pendingIntent);
 		}
 	}
 }
