@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">ImHere</string>
-    <string name="account">Gmailアカウント設定</string>
+    <string name="account">アカウント</string>
     <string name="menu_settings">Settings</string>
     <string name="mail">メールアドレス</string>
     <string name="hint_mail">example@gmail.com</string>
@@ -14,4 +14,12 @@
     <string name="service_launch_label">サービスを起動</string>
     <string name="service_launch_on_boot_label">ブート時にサービスを起動</string>
     <string name="location_setting_label">位置情報サービス設定</string>
+    <string name="terminal_settings">端末設定</string>
+    <string name="launch_settings_label">起動</string>
+
+    <!-- PreferencesのKey -->
+    <string name="pref_key_launch_on_boot">pref_key_launch_on_boot</string>
+    <string name="pref_key_interval">pref_key_interval</string>
+    <string name="pref_key_mail">pref_key_mail</string>
+    <string name="pref_key_pass">pref_key_pass</string>
 </resources>

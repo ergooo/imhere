@@ -33,7 +33,7 @@
         <service android:name=".ImhereService" />
 
         <receiver
-            android:name=".StartupReceiver"
+            android:name="jp.ergo.android.imhere.startup.StartupReceiver"
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

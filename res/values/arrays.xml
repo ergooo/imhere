@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="interval_key">
+        <item >15分</item>
+        <item >30分</item>
+        <item >1時間</item>
+        <item >6時間</item>
+        <item >12時間</item>
+        <item >24時間</item>
+    </string-array>
+
+    <!-- インターバル値。単位は「分」 -->
+    <string-array name="interval_value">
+        <item >15</item>
+        <item >30</item>
+        <item >60</item>
+        <item >360</item>
+        <item >720</item>
+        <item >1440</item>
+    </string-array>
+
+</resources>

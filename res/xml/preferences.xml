@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory android:title="@string/account">
+        <EditTextPreference
+            android:defaultValue=""
+            android:key="pref_key_mail"
+            android:title="@string/mail" />
+        <EditTextPreference
+            android:defaultValue=""
+            android:key="pref_key_pass"
+            android:password="true"
+            android:title="@string/password" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/launch_settings_label" >
+		<SwitchPreference
+		    android:defaultValue="false"
+		    android:key="pref_key_launch"
+		    android:title="@string/service_launch_label" />
+
+		<CheckBoxPreference
+		    android:defaultValue="false"
+		    android:key="pref_key_launch_on_boot"
+		    android:title="@string/service_launch_on_boot_label" />
+
+	    <ListPreference
+	        android:defaultValue="1440"
+	        android:entries="@array/interval_key"
+	        android:entryValues="@array/interval_value"
+	        android:key="pref_key_interval"
+	        android:title="@string/interval_label" />
+
+	</PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/terminal_settings">
+        <Preference android:title="@string/location_setting_label">
+             <intent android:action="android.settings.LOCATION_SOURCE_SETTINGS" />
+        </Preference>
+    </PreferenceCategory>
+
+
+
+</PreferenceScreen>
