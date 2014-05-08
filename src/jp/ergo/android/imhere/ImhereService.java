@@ -55,9 +55,11 @@ public class ImhereService extends Service implements LocationListener {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d(TAG, "onStartCommand");
+		final String prefKeyMail = getResources().getString(R.string.pref_key_mail);
+		final String prefKeyPass = getResources().getString(R.string.pref_key_pass);
 		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-		mUser = sp.getString("u", ""); // コールバック関数内で使いたいので変数に入れとく。
-		mPassword = sp.getString("p", ""); // コールバック関数内で使いたいので変数に入れとく。
+		mUser = sp.getString(prefKeyMail, ""); // コールバック関数内で使いたいので変数に入れとく。
+		mPassword = sp.getString(prefKeyPass, ""); // コールバック関数内で使いたいので変数に入れとく。
 		System.out.println("mail is \"" + mUser + "\"" + "\npassword is \"" + mPassword + "\"");
 
 		if(mUser.equals("") || mPassword.equals("")) return START_STICKY;

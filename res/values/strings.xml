@@ -19,6 +19,7 @@
 
     <!-- PreferencesのKey -->
     <string name="pref_key_launch_on_boot">pref_key_launch_on_boot</string>
+    <string name="pref_key_launch">pref_key_launch</string>
     <string name="pref_key_interval">pref_key_interval</string>
     <string name="pref_key_mail">pref_key_mail</string>
     <string name="pref_key_pass">pref_key_pass</string>

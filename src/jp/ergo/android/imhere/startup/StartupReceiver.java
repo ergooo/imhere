@@ -1,5 +1,9 @@
-package jp.ergo.android.imhere;
+package jp.ergo.android.imhere.startup;
 
+import jp.ergo.android.imhere.ImhereActivity;
+import jp.ergo.android.imhere.ImhereService;
+import jp.ergo.android.imhere.Interval;
+import jp.ergo.android.imhere.R;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -19,7 +23,7 @@ public class StartupReceiver extends BroadcastReceiver{
 		if(action.equals(Intent.ACTION_BOOT_COMPLETED)){
 			System.out.println("action is ACTION_BOOT_COMPLETED");
 			final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-			final boolean isLaunchOnBoot = sharedPreferences.getBoolean("launch_on_boot", false);
+			final boolean isLaunchOnBoot = sharedPreferences.getBoolean(context.getResources().getString(R.string.pref_key_launch_on_boot), false);
 			if(!isLaunchOnBoot) return;
 
 			final Intent serviceIntent = new Intent(context, ImhereService.class);
