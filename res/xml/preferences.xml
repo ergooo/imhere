@@ -29,7 +29,7 @@
 	</PreferenceCategory>
 
     <PreferenceCategory android:title="@string/terminal_settings">
-        <Preference android:title="@string/location_setting_label">
+        <Preference android:title="@string/location_setting_label" android:icon="@android:drawable/ic_menu_mylocation">
              <intent android:action="android.settings.LOCATION_SOURCE_SETTINGS" />
         </Preference>
     </PreferenceCategory>
