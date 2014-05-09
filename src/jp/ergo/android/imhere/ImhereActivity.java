@@ -1,6 +1,5 @@
 package jp.ergo.android.imhere;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
