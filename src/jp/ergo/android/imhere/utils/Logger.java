@@ -1,11 +1,12 @@
 package jp.ergo.android.imhere.utils;
 
+import jp.ergo.android.imhere.BuildConfig;
 import android.util.Log;
 
 public class Logger {
 	private static final String M7_TAG = "ImHere";
 
-	private static boolean sIsLoggable = false;
+	private static boolean sIsLoggable = BuildConfig.DEBUG;
 
 	public static void e(final Object message){
 		e(M7_TAG, message);
