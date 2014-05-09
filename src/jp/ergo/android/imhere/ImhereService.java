@@ -2,23 +2,28 @@ package jp.ergo.android.imhere;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import jp.ergo.android.imhere.utils.Logger;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
+import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -64,19 +69,30 @@ public class ImhereService extends Service implements LocationListener {
 		if(mUser.equals("") || mPassword.equals("")) return START_STICKY;
 
 		mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);	// onDestroy()で後始末をしたいので変数に入れる。
-		if(mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-			final LocationProvider provider = mLocationManager.getProvider(LocationManager.GPS_PROVIDER);
-			Logger.d("provider:" + provider.getName());
-			mLocationManager.removeUpdates(ImhereService.this);
-			mLocationManager.requestLocationUpdates(provider.getName(), 0, 0, ImhereService.this);
-		}else if(mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
-			final LocationProvider provider = mLocationManager.getProvider(LocationManager.NETWORK_PROVIDER);
-			Logger.d("provider:" + provider.getName());
-			mLocationManager.requestLocationUpdates(provider.getName(), 0, 0, ImhereService.this);
-		}else{
-			// TODO ネットワークもGPSもなかった場合
-			Logger.d("nothing is enabled");
+
+		final Criteria criteria = new Criteria();
+		// PowerRequirement は設定しないのがベストプラクティス
+		// Accuracy は設定しないのがベストプラクティス
+		//criteria.setAccuracy(Criteria.ACCURACY_FINE);	← Accuracy で最もやってはいけないパターン
+		// 以下は必要により
+		criteria.setBearingRequired(false);	// 方位不要
+		criteria.setSpeedRequired(false);	// 速度不要
+		criteria.setAltitudeRequired(false);	// 高度不要
+
+		final String provider = mLocationManager.getBestProvider(criteria, true);
+		System.out.println("provider=" + provider);
+		if (provider == null) {
+			// 位置情報が有効になっていない場合は、Google Maps アプリライクな [現在地機能を改善] ダイアログを起動します。
+			// TODO 位置情報の取得が出来ない場合の処理
+			return START_STICKY;
 		}
+		// 最後に取得できた位置情報が5分以内のものであれば有効とします。
+		final Location lastKnownLocation = mLocationManager.getLastKnownLocation(provider);
+		if (lastKnownLocation != null && (new Date().getTime() - lastKnownLocation.getTime()) <= (5 * 60 * 1000L)) {
+			onLocationChanged(lastKnownLocation);
+			return START_STICKY;
+		}
+		mLocationManager.requestLocationUpdates(provider, 0, 0, ImhereService.this);
 
 		return START_STICKY;
 	}
@@ -90,7 +106,7 @@ public class ImhereService extends Service implements LocationListener {
 
 	@Override
 	public void onLocationChanged(final Location location) {
-		Logger.d("onLocationChanged");
+		Logger.d("onLocationChanged " + location);
 		mLocationManager.removeUpdates(ImhereService.this);
 		new Thread(new Runnable() {
 			@Override
@@ -167,6 +183,27 @@ public class ImhereService extends Service implements LocationListener {
 			e.printStackTrace();
 		}
 		return "" + latitude + ", " + longitude;
+	}
+
+	private Dialog createLocationSuggestionDialog(){
+		return new AlertDialog.Builder(this)
+		.setTitle("現在地機能を改善")
+		.setMessage("現在、位置情報は一部有効ではないものがあります。次のように設定すると、もっともすばやく正確に現在地を検出できるようになります:\n\n● 位置情報の設定でGPSとワイヤレスネットワークをオンにする\n\n● Wi-Fiをオンにする")
+		.setPositiveButton("設定", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(final DialogInterface dialog, final int which) {
+				// 端末の位置情報設定画面へ遷移
+				try {
+					startActivity(new Intent("android.settings.LOCATION_SOURCE_SETTINGS"));
+				} catch (final ActivityNotFoundException e) {
+					// 位置情報設定画面がない糞端末の場合は、仕方ないので何もしない
+				}
+			}
+		})
+		.setNegativeButton("スキップ", new DialogInterface.OnClickListener() {
+			@Override public void onClick(final DialogInterface dialog, final int which) {}	// 何も行わない
+		})
+		.create();
 	}
 
 }
