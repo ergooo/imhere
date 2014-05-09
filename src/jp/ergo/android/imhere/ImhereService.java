@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -120,6 +122,27 @@ public class ImhereService extends Service implements LocationListener {
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 		System.out.println("onStatusChanged() " + provider);
 
+	}
+
+	public static void registerWithAlarmManager(final Context context, final long intervalMillis){
+		final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+		final PendingIntent pendingIntent = createPendingIntent(context);
+		alarmManager.cancel(pendingIntent);
+
+		System.out.println(intervalMillis);
+		final long triggerAtMillis = System.currentTimeMillis() + (intervalMillis - (System.currentTimeMillis() % intervalMillis));
+		alarmManager.setRepeating(AlarmManager.RTC, triggerAtMillis, intervalMillis, pendingIntent);
+	}
+
+	public static void unregisterWithAlermManager(final Context context){
+		final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+		final PendingIntent pendingIntent = createPendingIntent(context);
+		alarmManager.cancel(pendingIntent);
+	}
+
+	private static PendingIntent createPendingIntent(final Context context){
+		final Intent serviceIntent = new Intent(context, ImhereService.class);
+		return PendingIntent.getService(context, 0, serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 	}
 
 	private String getAddress(final double latitude, final double longitude){
