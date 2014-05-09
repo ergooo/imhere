@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import jp.ergo.android.imhere.utils.Logger;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -58,23 +59,23 @@ public class ImhereService extends Service implements LocationListener {
 		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 		mUser = sp.getString(prefKeyMail, ""); // コールバック関数内で使いたいので変数に入れとく。
 		mPassword = sp.getString(prefKeyPass, ""); // コールバック関数内で使いたいので変数に入れとく。
-		System.out.println("mail is \"" + mUser + "\"" + "\npassword is \"" + mPassword + "\"");
+		Logger.d("mail is \"" + mUser + "\"" + "\npassword is \"" + mPassword + "\"");
 
 		if(mUser.equals("") || mPassword.equals("")) return START_STICKY;
 
 		mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);	// onDestroy()で後始末をしたいので変数に入れる。
 		if(mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
 			final LocationProvider provider = mLocationManager.getProvider(LocationManager.GPS_PROVIDER);
-			System.out.println("provider:" + provider.getName());
+			Logger.d("provider:" + provider.getName());
 			mLocationManager.removeUpdates(ImhereService.this);
 			mLocationManager.requestLocationUpdates(provider.getName(), 0, 0, ImhereService.this);
 		}else if(mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
 			final LocationProvider provider = mLocationManager.getProvider(LocationManager.NETWORK_PROVIDER);
-			System.out.println("provider:" + provider.getName());
+			Logger.d("provider:" + provider.getName());
 			mLocationManager.requestLocationUpdates(provider.getName(), 0, 0, ImhereService.this);
 		}else{
 			// TODO ネットワークもGPSもなかった場合
-			System.out.println("nothing is enabled");
+			Logger.d("nothing is enabled");
 		}
 
 		return START_STICKY;
@@ -89,7 +90,7 @@ public class ImhereService extends Service implements LocationListener {
 
 	@Override
 	public void onLocationChanged(final Location location) {
-		System.out.println("onLocationChanged");
+		Logger.d("onLocationChanged");
 		mLocationManager.removeUpdates(ImhereService.this);
 		new Thread(new Runnable() {
 			@Override
@@ -103,7 +104,7 @@ public class ImhereService extends Service implements LocationListener {
 						);
 				final String message =  new MessageBuilder(address).toString();
 
-				System.out.println("message: " + message);
+				Logger.d("message: " + message);
 				new GmailSender(mUser, mPassword).sendEmail(title, message, mUser);
 
 			}
@@ -112,15 +113,15 @@ public class ImhereService extends Service implements LocationListener {
 
 	@Override
 	public void onProviderDisabled(String provider) {
-		System.out.println("onProviderDisabled() " + provider);
+		Logger.d("onProviderDisabled() " + provider);
 	}
 	@Override
 	public void onProviderEnabled(String provider) {
-		System.out.println("onProviderEnabled() " + provider);
+		Logger.d("onProviderEnabled() " + provider);
 	}
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
-		System.out.println("onStatusChanged() " + provider);
+		Logger.d("onStatusChanged() " + provider);
 
 	}
 
@@ -129,7 +130,7 @@ public class ImhereService extends Service implements LocationListener {
 		final PendingIntent pendingIntent = createPendingIntent(context);
 		alarmManager.cancel(pendingIntent);
 
-		System.out.println(intervalMillis);
+		Logger.d(intervalMillis);
 		final long triggerAtMillis = System.currentTimeMillis() + (intervalMillis - (System.currentTimeMillis() % intervalMillis));
 		alarmManager.setRepeating(AlarmManager.RTC, triggerAtMillis, intervalMillis, pendingIntent);
 	}

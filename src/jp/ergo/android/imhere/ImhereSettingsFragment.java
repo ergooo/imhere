@@ -3,13 +3,11 @@ package jp.ergo.android.imhere;
 import java.util.List;
 import java.util.Map;
 
+import jp.ergo.android.imhere.utils.Logger;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
-import android.app.AlarmManager;
 import android.app.Fragment;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -55,7 +53,7 @@ public class ImhereSettingsFragment extends PreferenceFragment implements OnShar
 
 	@Override
 	public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
-		System.out.println(key);
+		Logger.d(key);
 		if(key == null) return;
 		if(key.equals(mPrefKeyLaunch)){
 			if(sharedPreferences.getBoolean(key, false)){

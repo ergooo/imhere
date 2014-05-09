@@ -8,6 +8,8 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import jp.ergo.android.imhere.utils.Logger;
+
 public class GmailSender {
 	private final String mUser;
 	private final String mPassword;
@@ -22,7 +24,7 @@ public class GmailSender {
 	 * @param to 送信先メールアドレス
 	 */
 	public void sendEmail(final String title, final String message, final String to){
-		System.out.println("sendEmail(): title: " + title + ", message: " + message);
+		Logger.d("sendEmail(): title: " + title + ", message: " + message);
 		final Properties props = new Properties();
 		props.put("mail.smtp.host", "smtp.gmail.com");// SMTPサーバ名
 		props.put("mail.smtp.port", "587"); // SMTPサーバポート
