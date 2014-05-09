@@ -3,6 +3,7 @@ package jp.ergo.android.imhere;
 import java.util.List;
 import java.util.Map;
 
+import jp.ergo.android.imhere.submittest.SubmitTestDialogFragment;
 import jp.ergo.android.imhere.utils.Logger;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
@@ -36,7 +37,6 @@ public class ImhereSettingsFragment extends PreferenceFragment implements OnShar
         addPreferencesFromResource(R.xml.preferences);
 
         mIntervalKeyValue = createIntervalMap(this);
-
         // Interval Summary
         final Preference intervalPreference = findPreference(mPrefKeyInterval);
         final SharedPreferences sharedPreferences = getPreferenceManager().getSharedPreferences();
@@ -47,8 +47,20 @@ public class ImhereSettingsFragment extends PreferenceFragment implements OnShar
         final Editor editor = sharedPreferences.edit();
         editor.putBoolean(mPrefKeyLaunch, isServiceRunning());
         editor.commit();
+        Logger.d("isServiceRunning() " + isServiceRunning());
 
-//        findPreference(mPrefKeyMail).setSummary(sharedPreferences.getString(mPrefKeyMail, ""));
+
+        final Preference button = (Preference)findPreference("submitTestButton");
+        button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        	@Override
+        	public boolean onPreferenceClick(Preference arg0) {
+        		Logger.d("submit button is clicked");
+//        		ImhereService.unregisterWithAlermManager(getActivity());
+//        		ImhereService.registerWithAlarmManagerOneShot(getActivity());
+        		new SubmitTestDialogFragment(sharedPreferences).show(getFragmentManager(), "submitTestDialog");
+        		return true;
+        	}
+        });
     }
 
 	@Override

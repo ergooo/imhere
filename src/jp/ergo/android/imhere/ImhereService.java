@@ -2,7 +2,6 @@ package jp.ergo.android.imhere;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -26,13 +25,25 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class ImhereService extends Service implements LocationListener {
+	private ImhereServiceListener mListener;
+	private final ImhereBindService.Stub mMyBindService = new ImhereBindService.Stub() {
+
+		//Observer登録method内でRemoteCallbackList#register() methodで引数に渡されたCallback interfaceを登録する
+		public void setImhereServiceListener(ImhereServiceListener observer)
+				throws RemoteException {
+			Logger.d("setObserver called by " + Thread.currentThread().getName());
+			mListener = observer;
+		}
+
+	};
+
 
 	private final static String TAG = "ImhereService";
 	private String mUser = "";
@@ -47,18 +58,18 @@ public class ImhereService extends Service implements LocationListener {
     }
 	@Override
 	public IBinder onBind(Intent intent) {
-		return null;
+		return mMyBindService;
 	}
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		Log.d(TAG, "onCreate");
+		Logger.d(TAG, "onCreate");
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		Log.d(TAG, "onStartCommand");
+		Logger.d(TAG, "onStartCommand");
 		final String prefKeyMail = getResources().getString(R.string.pref_key_mail);
 		final String prefKeyPass = getResources().getString(R.string.pref_key_pass);
 		final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
@@ -80,19 +91,31 @@ public class ImhereService extends Service implements LocationListener {
 		criteria.setAltitudeRequired(false);	// 高度不要
 
 		final String provider = mLocationManager.getBestProvider(criteria, true);
-		System.out.println("provider=" + provider);
+		Logger.d("provider=" + provider);
 		if (provider == null) {
 			// 位置情報が有効になっていない場合は、Google Maps アプリライクな [現在地機能を改善] ダイアログを起動します。
 			// TODO 位置情報の取得が出来ない場合の処理
 			return START_STICKY;
 		}
 		// 最後に取得できた位置情報が5分以内のものであれば有効とします。
-		final Location lastKnownLocation = mLocationManager.getLastKnownLocation(provider);
-		if (lastKnownLocation != null && (new Date().getTime() - lastKnownLocation.getTime()) <= (5 * 60 * 1000L)) {
-			onLocationChanged(lastKnownLocation);
-			return START_STICKY;
-		}
+//		final Location lastKnownLocation = mLocationManager.getLastKnownLocation(provider);
+//		Logger.d("lastLocation: " + lastKnownLocation);
+//		if (lastKnownLocation != null && (new Date().getTime() - lastKnownLocation.getTime()) <= (5 * 60 * 1000L)) {
+//			onLocationChanged(lastKnownLocation);
+//			return START_STICKY;
+//		}
 		mLocationManager.requestLocationUpdates(provider, 0, 0, ImhereService.this);
+
+
+		// コールバックを呼ぶテスト
+		if(mListener != null){
+			try {
+				mListener.onError("hogehoge");
+			} catch (RemoteException e) {
+				// TODO 自動生成された catch ブロック
+				e.printStackTrace();
+			}
+		}
 
 		return START_STICKY;
 	}
@@ -101,7 +124,7 @@ public class ImhereService extends Service implements LocationListener {
 		if(mLocationManager != null) mLocationManager.removeUpdates(this);
 		super.onDestroy();
 
-		Log.d(TAG, "onDestroy");
+		Logger.d(TAG, "onDestroy");
 	}
 
 	@Override
@@ -149,6 +172,13 @@ public class ImhereService extends Service implements LocationListener {
 		Logger.d(intervalMillis);
 		final long triggerAtMillis = System.currentTimeMillis() + (intervalMillis - (System.currentTimeMillis() % intervalMillis));
 		alarmManager.setRepeating(AlarmManager.RTC, triggerAtMillis, intervalMillis, pendingIntent);
+	}
+	public static void registerWithAlarmManagerOneShot(final Context context){
+		final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+		final PendingIntent pendingIntent = createPendingIntent(context);
+		alarmManager.cancel(pendingIntent);
+
+		alarmManager.set(AlarmManager.RTC, System.currentTimeMillis(), pendingIntent);
 	}
 
 	public static void unregisterWithAlermManager(final Context context){

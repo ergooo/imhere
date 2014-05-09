@@ -8,7 +8,7 @@
         </Preference>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/launch_settings_label" >
+    <PreferenceCategory android:title="@string/launch_settings" >
 		<SwitchPreference
 		    android:defaultValue="false"
 		    android:key="pref_key_launch"
@@ -27,6 +27,11 @@
 	        android:title="@string/interval_label" />
 
 	</PreferenceCategory>
+     <PreferenceCategory android:title="@string/test_label" >
+         <Preference
+             android:key="submitTestButton"
+             android:title="@string/submit_test" />
+     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/terminal_settings">
         <Preference android:title="@string/location_setting_label" android:icon="@android:drawable/ic_menu_mylocation">
