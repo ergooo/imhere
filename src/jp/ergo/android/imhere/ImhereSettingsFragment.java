@@ -3,6 +3,7 @@ package jp.ergo.android.imhere;
 import java.util.List;
 import java.util.Map;
 
+import jp.ergo.android.imhere.submittest.SubmitTest;
 import jp.ergo.android.imhere.submittest.SubmitTestDialogFragment;
 import jp.ergo.android.imhere.utils.Logger;
 import android.app.ActivityManager;
@@ -57,7 +58,9 @@ public class ImhereSettingsFragment extends PreferenceFragment implements OnShar
         		Logger.d("submit button is clicked");
 //        		ImhereService.unregisterWithAlermManager(getActivity());
 //        		ImhereService.registerWithAlarmManagerOneShot(getActivity());
-        		new SubmitTestDialogFragment(sharedPreferences).show(getFragmentManager(), "submitTestDialog");
+
+//        		new SubmitTestDialogFragment(sharedPreferences).show(getFragmentManager(), "submitTestDialog");
+        		new SubmitTest(getActivity(), getFragmentManager()).showSubmitTestDialog(getFragmentManager());
         		return true;
         	}
         });

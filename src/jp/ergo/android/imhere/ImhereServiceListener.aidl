@@ -2,5 +2,9 @@ package jp.ergo.android.imhere;
 
 
 interface ImhereServiceListener{
-    void onError(String message);
+    void onLocationProviderNotFound();
+    void onAccountNotValid();
+    void onGeocoderNotWorking();
+    void onMailSendingFailed(String message);
+    void onComplete();
 }

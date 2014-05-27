@@ -20,6 +20,8 @@
     <string name="launch_settings">起動</string>
     <string name="test_label">確認</string>
     <string name="submit_test">テスト送信</string>
+    <string name="use_geocoder">住所を逆引き</string>
+    <string name="use_geocoder_summary">取得した緯度経度から住所を逆引きして表示します</string>
 
     <!-- PreferencesのKey -->
     <string name="pref_key_launch_on_boot">pref_key_launch_on_boot</string>
@@ -27,6 +29,7 @@
     <string name="pref_key_interval">pref_key_interval</string>
     <string name="pref_key_mail">pref_key_mail</string>
     <string name="pref_key_pass">pref_key_pass</string>
+	<string name="pref_key_use_geocoder">pref_key_use_geocoder</string>
 
     <!-- SubmitTestDialog -->
     <string name="submit_test_dialog_title">送信確認</string>

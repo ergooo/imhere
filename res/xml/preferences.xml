@@ -19,6 +19,12 @@
 		    android:key="pref_key_launch_on_boot"
 		    android:title="@string/service_launch_on_boot_label" />
 
+		<CheckBoxPreference
+		    android:defaultValue="true"
+		    android:key="pref_key_use_geocoder"
+		    android:title="@string/use_geocoder"
+		    android:summary="@string/use_geocoder_summary"/>
+
 	    <ListPreference
 	        android:defaultValue="1440"
 	        android:entries="@array/interval_key"
