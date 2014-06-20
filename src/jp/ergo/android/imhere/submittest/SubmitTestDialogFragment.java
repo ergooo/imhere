@@ -5,15 +5,20 @@ import jp.ergo.android.imhere.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 
 public class SubmitTestDialogFragment extends DialogFragment{
 
 	private final SharedPreferences mSharedPreferences;
-	public SubmitTestDialogFragment(final SharedPreferences sharedPreferences){
+	private final ProgressDialog mProgressDialog;
+	private final Handler mHandler = new Handler();
+	public SubmitTestDialogFragment(final SharedPreferences sharedPreferences, final ProgressDialog progressDialog){
 		mSharedPreferences = sharedPreferences;
+		mProgressDialog = progressDialog;
 
 	}
 	@Override
@@ -24,6 +29,13 @@ public class SubmitTestDialogFragment extends DialogFragment{
 		builder.setMessage(createDialogMessage())
 		.setPositiveButton(R.string.submit_test_dialog_positive, new DialogInterface.OnClickListener() {
 			public void onClick(final DialogInterface dialog, final int id) {
+				mHandler.post(new Runnable() {
+
+					@Override
+					public void run() {
+						if(mProgressDialog != null) mProgressDialog.show();
+					}
+				});
 				ImhereService.unregisterWithAlermManager(getActivity());
         		ImhereService.registerWithAlarmManagerOneShot(getActivity());
 
